@@ -1,0 +1,20 @@
+﻿<Project>
+
+  <Import Project=".\version.props" />
+  
+  <PropertyGroup>
+    <Company>GodSharp</Company>
+    <Authors>seayxu</Authors>
+    <RepositoryType>git</RepositoryType>
+    <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © GodSharp 2019</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <OutputPath>$(SolutionDir)\output\$(AssemblyName)</OutputPath>
+    <DocumentationFile>$(SolutionDir)\output\$(AssemblyName)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+</Project>
