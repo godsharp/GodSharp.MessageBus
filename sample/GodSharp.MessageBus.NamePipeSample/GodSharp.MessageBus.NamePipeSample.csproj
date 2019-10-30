@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GodSharp.MessageBus.NamedPipes\GodSharp.MessageBus.NamedPipes.csproj" />
+    <ProjectReference Include="..\..\src\GodSharp.MessageBus.Serialization.Protobuf\GodSharp.MessageBus.Serialization.Protobuf.csproj" />
+  </ItemGroup>
+
+</Project>

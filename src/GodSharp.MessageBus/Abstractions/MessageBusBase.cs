@@ -2,17 +2,19 @@
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace GodSharp.Bus.Messages
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("GodSharp.MessageBus.Remote")]
+
+namespace GodSharp.Bus.Messages.Abstractions
 {
     using GodSharp.Bus.Messages.Internals;
 
     public abstract class MessageBusBase
     {
-        ConcurrentDictionary<Type, object> contaners;
+        protected ConcurrentDictionary<Type, object> Containers;
 
         public MessageBusBase()
         {
-            contaners = new ConcurrentDictionary<Type, object>();
+            Containers = new ConcurrentDictionary<Type, object>();
         }
 
         internal void Subscribe<TBusHanlder, TPackMessage,TMessage>(TBusHanlder handler, Func<IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage>> fn = null, string name = "default") where TPackMessage : MessagePack
@@ -22,16 +24,16 @@ namespace GodSharp.Bus.Messages
             Type type = typeof(TMessage);
 
             IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage> typeHandler;
-            if (!contaners.Keys.Contains(type))
+            if (!Containers.Keys.Contains(type))
             {
                 typeHandler = fn();
                 typeHandler.Add(handler, name);
 
-                contaners.TryAdd(type, typeHandler);
+                Containers.TryAdd(type, typeHandler);
                 return;
             }
 
-            if (!contaners.TryGetValue(type, out object val)) return;
+            if (!Containers.TryGetValue(type, out object val)) return;
 
             typeHandler = val as IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage>;
 
@@ -44,7 +46,7 @@ namespace GodSharp.Bus.Messages
         {
             Type type = typeof(TMessage);
 
-            if (!contaners.TryGetValue(type, out object val)) return;
+            if (!Containers.TryGetValue(type, out object val)) return;
 
             IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage> handler = val as IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage>;
 
@@ -58,7 +60,7 @@ namespace GodSharp.Bus.Messages
             if (handler == null) return;
             Type type = typeof(TMessage);
 
-            if (!contaners.TryGetValue(type, out object val)) return;
+            if (!Containers.TryGetValue(type, out object val)) return;
 
             IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage> typeHandler = val as IMessageTypeHandler<TBusHanlder, TPackMessage, TMessage>;
 
@@ -79,10 +81,10 @@ namespace GodSharp.Bus.Messages
                     // TODO: dispose managed state (managed objects).
                     try
                     {
-                        Type[] types = contaners.Keys.ToArray();
+                        Type[] types = Containers.Keys.ToArray();
                         foreach (var type in types)
                         {
-                            if (!contaners.TryGetValue(type, out object val)) return;
+                            if (!Containers.TryGetValue(type, out object val)) return;
                             IDisposable disposable = val as IDisposable;
                             if (disposable != null) disposable.Dispose();
                         }

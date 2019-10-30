@@ -40,6 +40,8 @@ namespace GodSharp.Bus.Messages
             //_handler += handler;
         }
 
+        public bool Contains(string name = "default") => handlers.ContainsKey(name);
+
         public void Remove(Action<TBusHandler, TBusHandler> @operator, TBusHandler handler, string name = "default")
         {
             if (!handlers.ContainsKey(name)) return;

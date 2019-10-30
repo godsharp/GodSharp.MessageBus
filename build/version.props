@@ -1,6 +1,30 @@
 ﻿<Project>
   <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2019.3.20813.0</Version>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.Remote'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.Serialization.MessagePack'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.Serialization.MsgPack'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.Serialization.Protobuf'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.NamedPipes'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(AssemblyName)'=='GodSharp.MessageBus.Test'">
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>2019.4.11030.150-preview</Version>
   </PropertyGroup>
 </Project>

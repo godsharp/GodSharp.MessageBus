@@ -1,6 +1,8 @@
-﻿namespace GodSharp.Bus.Messages.Internals
+﻿using GodSharp.Bus.Messages.Abstractions;
+
+namespace GodSharp.Bus.Messages.Internals
 {
-    internal struct NullMessage
+    public class NullMessage : IMessage
     {
     }
 }

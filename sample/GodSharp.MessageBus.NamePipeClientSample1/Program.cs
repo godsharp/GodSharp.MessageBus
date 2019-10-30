@@ -1,34 +1,30 @@
 ﻿using GodSharp.Bus.Messages;
+using GodSharp.MessageBus.NamePipeSample;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GodSharp.MessageBusSample
+namespace GodSharp.MessageBus.NamePipeClientSample1
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello GodSharp.MessageBus!");
+            Console.WriteLine("Hello GodSharp.MessageBus.NamePipeClientSample1!");
 
-            string cmd =null;
+            NamedPipeTester.RunAsClient(() => {
+                Bus.Messages.MessageBus.Subscribe(MessageHandler10);
+                Bus.Messages.MessageBus.Subscribe(MessageHandler11, "handler1");
+                Bus.Messages.MessageBus.Subscribe(MessageHandler12, "handler2");
 
-            MessageBus.Initialize(x =>
-            {
-                x.AddMemory();
+                Bus.Messages.MessageBus.Subscribe<TestMessage>(MessageHandler20);
+                Bus.Messages.MessageBus.Subscribe<TestMessage>(MessageHandler21, "handler1");
+                Bus.Messages.MessageBus.Subscribe<TestMessage>(MessageHandler22, "handler2");
             });
-
-            MessageBus.Subscribe(MessageHandler10);
-            MessageBus.Subscribe(MessageHandler11, "handler1");
-            MessageBus.Subscribe(MessageHandler12, "handler2");
-
-            MessageBus.Subscribe<TestMessage>(MessageHandler20);
-            MessageBus.Subscribe<TestMessage>(MessageHandler21, "handler1");
-            MessageBus.Subscribe<TestMessage>(MessageHandler22, "handler2");
 
             CancellationTokenSource cts = new CancellationTokenSource();
 
-            Task task = new Task(async() =>
+            Task task = new Task(async () =>
             {
                 try
                 {
@@ -37,33 +33,33 @@ namespace GodSharp.MessageBusSample
                     while (!cts.IsCancellationRequested)
                     {
                         int i = random.Next(1, 7);
-                        Console.WriteLine($"send {i}");
+                        Console.WriteLine($"send1 {i}");
 
                         switch (i)
                         {
                             case 1:
-                                MessageBus.Publish();
+                                Bus.Messages.MessageBus.Publish();
                                 break;
                             case 2:
-                                MessageBus.Publish("handler1");
+                                Bus.Messages.MessageBus.Publish("handler1");
                                 break;
                             case 3:
-                                MessageBus.Publish("handler2");
+                                Bus.Messages.MessageBus.Publish("handler2");
                                 break;
                             case 4:
-                                MessageBus.Publish(new TestMessage());
+                                Bus.Messages.MessageBus.Publish(new TestMessage() { FromId = "001" });
                                 break;
                             case 5:
-                                MessageBus.Publish(new TestMessage(), "handler1");
+                                Bus.Messages.MessageBus.Publish(new TestMessage() { FromId = "001" }, "handler1");
                                 break;
                             case 6:
-                                MessageBus.Publish(new TestMessage(), "handler2");
+                                Bus.Messages.MessageBus.Publish(new TestMessage() { FromId = "001" }, "handler2");
                                 break;
                             default:
                                 continue;
                         }
 
-                        await Task.Delay(20);
+                        await Task.Delay(10);
                     }
                 }
                 catch (Exception ex)
@@ -75,17 +71,7 @@ namespace GodSharp.MessageBusSample
             });
 
             task.Start();
-
-            do
-            {
-                cmd = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(cmd)) continue;
-            } while (cmd?.ToLower() != "q");
-
-            Console.WriteLine("waitting to cancel");
-            cts.Cancel();
-
-            Console.ReadLine();
+            NamedPipeTester.RunAsLoop();
         }
 
         static void MessageHandler10(MessagePack pack)
@@ -105,22 +91,17 @@ namespace GodSharp.MessageBusSample
 
         static void MessageHandler20(MessagePack<TestMessage> pack)
         {
-            Console.WriteLine($"MessageHandler20 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}");
+            Console.WriteLine($"MessageHandler20 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}/{pack.Message.FromId}");
         }
 
         static void MessageHandler21(MessagePack<TestMessage> pack)
         {
-            Console.WriteLine($"MessageHandler21 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}");
+            Console.WriteLine($"MessageHandler21 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}/{pack.Message.FromId}");
         }
 
         static void MessageHandler22(MessagePack<TestMessage> pack)
         {
-            Console.WriteLine($"MessageHandler22 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}");
-        }
-
-        class TestMessage
-        {
-            public Guid Id { get; set; } = Guid.NewGuid();
+            Console.WriteLine($"MessageHandler22 received message {pack.Name}/{pack.DateTime.ToString("HH:mm:ss.fff")}/{pack.Message.Id}/{pack.Message.FromId}");
         }
     }
 }

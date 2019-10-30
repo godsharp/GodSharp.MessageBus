@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\build\common.props" />
+  
+  <PropertyGroup>
+    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="GodSharp.Pipes.NamedPipes" Version="2019.4.11017.12046" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\GodSharp.MessageBus.Remote\GodSharp.MessageBus.Remote.csproj" />
+  </ItemGroup>
+
+</Project>
