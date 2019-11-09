@@ -1,7 +1,7 @@
 ﻿using ProtoBuf;
 using System.IO;
 
-namespace GodSharp.Bus.Messages.Serialization
+namespace GodSharp.Bus.Messages.Serialization.Protobuf
 {
     public class ProtobufSerializer : ISerializer
     {

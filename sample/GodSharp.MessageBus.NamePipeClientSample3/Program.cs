@@ -1,12 +1,12 @@
 ﻿using GodSharp.MessageBus.NamePipeSample;
 
-namespace GodSharp.MessageBus.NamePipeClientSample1
+namespace GodSharp.MessageBus.NamePipeClientSample3
 {
-    partial class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            NamedPipeTester.RunAsClient(2);
+            NamedPipeTester.RunAsClient(3);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using GodSharp.Bus.Messages.Serialization;
+﻿using GodSharp.Bus.Messages.Serialization.Protobuf;
 using GodSharp.Bus.Messages.Tests._Messages;
 using Swifter.Json;
 using System;

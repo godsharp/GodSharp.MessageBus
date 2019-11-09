@@ -1,22 +1,6 @@
-﻿#if NET40
-using System;
+﻿using Mp = MessagePack;
 
-namespace GodSharp.Bus.Messages.Serialization
-{
-    public class MessagePackSerializer : ISerializer
-    {
-        public byte[] Serialize<T>(T t) => throw new NotImplementedException();
-
-        public T Deserialize<T>(byte[] buffer) => throw new NotImplementedException();
-
-        public void Dispose() { }
-    }
-}
-#else
-using System;
-using Mp = MessagePack;
-
-namespace GodSharp.Bus.Messages.Serialization
+namespace GodSharp.Bus.Messages.Serialization.MessagePack
 {
     public class MessagePackSerializer : ISerializer
     {
@@ -27,4 +11,3 @@ namespace GodSharp.Bus.Messages.Serialization
         public void Dispose() { }
     }
 }
-#endif

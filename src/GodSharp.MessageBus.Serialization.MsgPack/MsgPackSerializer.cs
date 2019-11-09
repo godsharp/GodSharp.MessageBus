@@ -1,7 +1,7 @@
 ﻿using MsgPack.Serialization;
 using System.IO;
 
-namespace GodSharp.Bus.Messages.Serialization
+namespace GodSharp.Bus.Messages.Serialization.MsgPack
 {
     public class MsgPackSerializer : ISerializer
     {

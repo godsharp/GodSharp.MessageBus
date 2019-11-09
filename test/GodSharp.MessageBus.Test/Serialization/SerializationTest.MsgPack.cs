@@ -1,4 +1,4 @@
-﻿using GodSharp.Bus.Messages.Serialization.Protobuf;
+﻿using GodSharp.Bus.Messages.Serialization.MsgPack;
 using GodSharp.Bus.Messages.Tests._Messages;
 using GodSharp.Bus.Messages.Transfers;
 using System;
@@ -9,9 +9,9 @@ namespace GodSharp.Bus.Messages.Tests.Serialization
     public partial class SerializationTest
     {
         [Fact]
-        public void Protobuf_Serialize_Deserialize_Test()
+        public void MsgPack_Serialize_Deserialize_Test()
         {
-            using (ProtobufSerializer serializer = new ProtobufSerializer())
+            using (MsgPackSerializer serializer = new MsgPackSerializer())
             {
                 Person person = new Person() { Id = 2, Name = "Jerry", Address = new Address() };
 
@@ -22,24 +22,24 @@ namespace GodSharp.Bus.Messages.Tests.Serialization
                 Assert.Equal(person.Id, _person.Id);
                 Assert.Equal(person.Name, _person.Name);
 
-                ProtobufMessagePack<Person> pack = new ProtobufMessagePack<Person>(person);
+                MessagePack<Person> pack = new MessagePack<Person>(person);
 
                 buffer = serializer.Serialize(pack);
-                _person = serializer.Deserialize<ProtobufMessagePack<Person>>(buffer)?.Message;
+                _person = serializer.Deserialize<MessagePack<Person>>(buffer)?.Message;
 
                 Assert.Equal(person.Id, _person.Id);
                 Assert.Equal(person.Name, _person.Name);
 
                 Packet packet = new Packet(typeof(Person).FullName, buffer, PacketType.Join, Guid.NewGuid().ToString());
 
-                buffer = serializer.Serialize(new ProtobufPacket(packet));
-                ProtobufPacket _packet = serializer.Deserialize<ProtobufPacket>(buffer);
+                buffer = serializer.Serialize(packet);
+                Packet _packet = serializer.Deserialize<Packet>(buffer);
 
                 Assert.Equal(packet.PackType, _packet.PackType);
                 Assert.Equal(packet.PacketType, _packet.PacketType);
                 Assert.Equal(packet.FromId, _packet.FromId);
 
-                _person = serializer.Deserialize<ProtobufMessagePack<Person>>(_packet.Payload)?.Message;
+                _person = serializer.Deserialize<MessagePack<Person>>(_packet.Payload)?.Message;
 
                 Assert.Equal(person.Id, _person.Id);
                 Assert.Equal(person.Name, _person.Name);

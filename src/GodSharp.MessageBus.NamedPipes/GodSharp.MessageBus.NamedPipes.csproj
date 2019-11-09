@@ -7,7 +7,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="GodSharp.Pipes.NamedPipes" Version="2019.4.11017.12046" />
+    <PackageReference Include="GodSharp.Pipes.NamedPipes" Version="2019.4.21108.130" />
   </ItemGroup>
   
   <ItemGroup>

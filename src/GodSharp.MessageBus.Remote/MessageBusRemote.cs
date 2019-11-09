@@ -1,30 +1,34 @@
-﻿using GodSharp.Bus.Messages.Internals;
-using GodSharp.Bus.Messages.Abstractions;
-using System.Collections.Generic;
+﻿using GodSharp.Bus.Messages.Abstractions;
+using GodSharp.Bus.Messages.Internals;
 using GodSharp.Bus.Messages.Transfers;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace GodSharp.Bus.Messages
 {
     public class MessageBusRemote : MessageBusBase, IMessageBus, IMessageBusHanlder
     {
-        List<string> Publishs { get; set; }
+        ConcurrentDictionary<string, int> Publishs { get; set; }
+        ConcurrentDictionary<string, List<string>> Clients { get; set; }
 
         public MessageBusRemote()
         {
-            Publishs = new List<string>();
+            Publishs = new ConcurrentDictionary<string, int>();
+            Clients = new ConcurrentDictionary<string, List<string>>();
         }
 
         public virtual void Subscribe(MessageBusHandler handler, string name = "default")
         {
             base.Subscribe<MessageBusHandler, MessagePack, NullMessage>(handler, () => new MessageTypeHandler(), name);
 
-            RemoteConfiguration.Transmitter.Send(new Packet(typeof(NullMessage).FullName, null, PacketType.Subscribe, RemoteConfiguration.Transmitter.Id));
+            SubscribeRemote(typeof(NullMessage).FullName, PacketType.Subscribe);
         }
 
         public virtual void Publish(string name = "default")
         {
             MessagePack pack = new MessagePack(name);
-            if (Publishs.Contains(typeof(NullMessage).FullName))
+            if (Publishs.Keys.Contains(typeof(NullMessage).FullName))
             RemoteConfiguration.Transmitter.Send(new Packet(typeof(NullMessage).FullName,
                 RemoteConfiguration.Adapter.MessagePackSerialize(pack, RemoteConfiguration.Serializer),
                 PacketType.Publish,
@@ -37,20 +41,20 @@ namespace GodSharp.Bus.Messages
         {
             base.Unsubscribe<MessageBusHandler, MessagePack, NullMessage>(handler, name);
 
-            RemoteConfiguration.Transmitter.Send(new Packet(typeof(NullMessage).FullName, null, PacketType.Unsubscribe, RemoteConfiguration.Transmitter.Id));
+            SubscribeRemote(typeof(NullMessage).FullName, PacketType.Unsubscribe);
         }
 
         public virtual void Subscribe<T>(MessageBusHandler<T> handler, string name = "default")
         {
             base.Subscribe<MessageBusHandler<T>, MessagePack<T>, T>(handler, () => new MessageTypeHandler<T>(), name);
 
-            RemoteConfiguration.Transmitter.Send(new Packet(typeof(T).FullName, null, PacketType.Subscribe, RemoteConfiguration.Transmitter.Id));
+            SubscribeRemote(typeof(T).FullName, PacketType.Subscribe);
         }
 
         public virtual void Publish<T>(T message, string name = "default")
         {
             MessagePack<T> pack = new MessagePack<T>(message, name);
-            if (Publishs.Contains(typeof(T).FullName)) 
+            if (Publishs.Keys.Contains(typeof(T).FullName)) 
             RemoteConfiguration.Transmitter.Send(new Packet(typeof(T).FullName,
                 RemoteConfiguration.Adapter.MessagePackSerialize(pack, RemoteConfiguration.Serializer),
                 PacketType.Publish, 
@@ -63,7 +67,49 @@ namespace GodSharp.Bus.Messages
         {
             base.Unsubscribe<MessageBusHandler<T>, MessagePack<T>, T>(handler, name);
 
-            RemoteConfiguration.Transmitter.Send(new Packet(typeof(T).FullName, null, PacketType.Unsubscribe, RemoteConfiguration.Transmitter.Id));
+            SubscribeRemote(typeof(T).FullName, PacketType.Unsubscribe);
+        }
+
+        private void SubscribeRemote(string type,PacketType packetType)
+        {
+            RemoteConfiguration.Transmitter.Send(new Packet(type, null, packetType, RemoteConfiguration.Transmitter.Id));
+        }
+
+        public void Join(Packet packet)
+        {
+            try
+            {
+                if (Clients.Keys.Contains(packet.FromId)) return;
+
+                Clients.AddOrUpdate(packet.FromId, new List<string>());
+
+                foreach (var item in Containers.Keys)
+                {
+                    SubscribeRemote(item.FullName, PacketType.Subscribe);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void Exit(Packet packet)
+        {
+            try
+            {
+                List<string> types = null;
+                if (Clients.ContainsKey(packet.FromId)) Clients.TryRemove(packet.FromId, out types);
+
+                foreach (var item in types)
+                {
+                    Subscribe(item, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public void Handle<T>(Packet packet)
@@ -88,11 +134,22 @@ namespace GodSharp.Bus.Messages
         {
             if (subscribe)
             {
-                if (!Publishs.Contains(type)) Publishs.Add(type);
+                int val = 0;
+                Publishs.TryGetValue(type, out val);
+
+                Publishs.AddOrUpdate(type, val + 1);
             }
             else
             {
-                if (Publishs.Contains(type)) Publishs.Remove(type);
+                if (Publishs.TryGetValue(type, out int val))
+                {
+                    Publishs.AddOrUpdate(type, val - 1);
+                }
+
+                if (val <= 1)
+                {
+                    Publishs.TryRemove(type, out int _);
+                }
             }
         }
 

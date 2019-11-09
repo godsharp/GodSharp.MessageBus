@@ -52,6 +52,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\GodSharp.MessageBus.Remote\GodSharp.MessageBus.Remote.csproj" />
+    <ProjectReference Include="..\..\src\GodSharp.MessageBus.Serialization.MessagePack\GodSharp.MessageBus.Serialization.MessagePack.csproj" Condition="'$(TargetFramework)' != 'net40'" />
+    <ProjectReference Include="..\..\src\GodSharp.MessageBus.Serialization.MsgPack\GodSharp.MessageBus.Serialization.MsgPack.csproj" />
     <ProjectReference Include="..\..\src\GodSharp.MessageBus.Serialization.Protobuf\GodSharp.MessageBus.Serialization.Protobuf.csproj" />
   </ItemGroup>
 

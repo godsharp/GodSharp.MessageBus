@@ -10,8 +10,6 @@ namespace GodSharp.MessageBus.NamePipeServerSample
             Console.WriteLine("Hello GodSharp.MessageBus.NamePipeServerSample!");
 
             NamedPipeTester.RunAsServer();
-
-            NamedPipeTester.RunAsLoop();
         }
     }
 }

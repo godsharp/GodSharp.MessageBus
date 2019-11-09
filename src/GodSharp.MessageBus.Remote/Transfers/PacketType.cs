@@ -4,6 +4,8 @@
     {
         Subscribe,
         Publish,
-        Unsubscribe
+        Unsubscribe,
+        Join,
+        Exit
     }
 }

@@ -24,14 +24,29 @@ namespace GodSharp.Bus.Messages.Transfers
             {
                 foreach (var item in bytes)
                 {
-                    PacketHandler.Handle(RemoteConfiguration.Adapter.PacketDeserialize(item, RemoteConfiguration.Serializer), this);
+                    var packet = RemoteConfiguration.Adapter.PacketDeserialize(item, RemoteConfiguration.Serializer);
+
+                    if (string.Equals(packet.FromId, Id, System.StringComparison.CurrentCultureIgnoreCase)) return;
+
+                    switch (packet.PacketType)
+                    {
+                        case PacketType.Join:
+                            (MessageBus.Instance as IMessageBusHanlder)?.Join(packet);
+                            break;
+                        case PacketType.Exit:
+                            (MessageBus.Instance as IMessageBusHanlder)?.Exit(packet);
+                            break;
+                        default:
+                            PacketHandler.Handle(packet, this);
+                            break;
+                    }
                 }
             }
         }
 
         public void Handle<T>(Packet packet)
         {
-            if (string.Equals(packet.FromId, Id, System.StringComparison.CurrentCultureIgnoreCase)) return;
+            //if (string.Equals(packet.FromId, Id, System.StringComparison.CurrentCultureIgnoreCase)) return;
 
             (MessageBus.Instance as IMessageBusHanlder)?.Handle<T>(packet);
         }

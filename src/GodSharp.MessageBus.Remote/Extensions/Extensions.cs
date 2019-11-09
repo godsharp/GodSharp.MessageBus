@@ -7,12 +7,12 @@ using System.Reflection;
 
 namespace GodSharp.Bus.Messages
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static IMessageBusBuilder AddRemote(this IMessageBusBuilder builder)
         {
             MessageBus.Instance = new MessageBusRemote();
-            return builder;
+            return builder.AddCoder();
         }
 
         public static IMessageBusBuilder AddSerializationAdapter<T>(this IMessageBusBuilder builder) where T : ISerializationAdapter => builder.AddSerializationAdapter(Activator.CreateInstance<T>());

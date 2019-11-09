@@ -1,8 +1,8 @@
 ﻿using GodSharp.Bus.Messages.Transfers;
 
-namespace GodSharp.Bus.Messages.Serialization
+namespace GodSharp.Bus.Messages
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static T MapTo<T>(this Packet packet) where T : Packet, new() => new T() { PackType = packet.PackType, Payload = packet.Payload, PacketType = packet.PacketType, FromId = packet.FromId };
 

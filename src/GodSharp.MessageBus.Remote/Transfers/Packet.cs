@@ -15,8 +15,19 @@ namespace GodSharp.Bus.Messages.Transfers
 
         public Packet(string packType, byte[] payload, PacketType packetType, string fromId)
         {
+            Initizlize(packType, payload, packetType, fromId);
+        }
+
+        public Packet(Packet packet)
+        {
+            if (packet == null) throw new ArgumentNullException(nameof(packet));
+            Initizlize(packet.PackType, packet.Payload, packet.PacketType, packet.FromId);
+        }
+
+        private void Initizlize(string packType, byte[] payload, PacketType packetType, string fromId)
+        {
             PackType = packType ?? throw new ArgumentNullException(nameof(packType));
-            Payload = payload;// ?? throw new ArgumentNullException(nameof(payload));
+            Payload = payload;
             PacketType = packetType;
             FromId = fromId ?? throw new ArgumentNullException(nameof(fromId));
         }

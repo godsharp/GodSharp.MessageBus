@@ -1,5 +1,5 @@
-﻿using GodSharp.Pipes.NamedPipes;
-using System.Collections.Concurrent;
+﻿using GodSharp.Bus.Messages.Transfers;
+using GodSharp.Pipes.NamedPipes;
 
 namespace GodSharp.Bus.Messages
 {
@@ -9,26 +9,31 @@ namespace GodSharp.Bus.Messages
 
         public MessageBusNamedPipeServer()
         {
-            Server = new NamedPipeServer(new NamedPipeServerOptions("godhsarp.bus.message.transmitter.namedpipe", OnReadCompleted, OnConnectionCompleted, OnStopCompleted, OnException, OnOutputLogging, 1024, 254));
+            Server = new NamedPipeServer(new NamedPipeServerOptions("godhsarp.bus.message.transmitter.namedpipe", OnReadCompleted, OnConnectionCompleted, OnInteractionCompleted, OnStopCompleted, OnException, OnOutputLogging, 1024, 254));
 
             Server.Start();
         }
 
-        private void OnReadCompleted(NamedPipeConnectionArgs args)
+        private void OnReadCompleted(MasterConnectionArgs args)
         {
             Server.Write(args.Buffer);
         }
 
-        private void OnConnectionCompleted(NamedPipeConnectionArgs args)
-        {
-            //System.Console.WriteLine($"");
-        }
-
-        private void OnStopCompleted(NamedPipeConnectionArgs args)
+        private void OnConnectionCompleted(MasterConnectionArgs args)
         {
         }
 
-        private void OnException(NamedPipeConnectionArgs args)
+        private void OnInteractionCompleted(MasterConnectionArgs args)
+        {
+            RemoteConfiguration.Transmitter.Send(new Packet("Null", null, PacketType.Join, args.ClientGuid.ToString()));
+        }
+
+        private void OnStopCompleted(MasterConnectionArgs args)
+        {
+            RemoteConfiguration.Transmitter.Send(new Packet("Null", null, PacketType.Exit, args.ClientGuid.ToString()));
+        }
+
+        private void OnException(MasterConnectionArgs args)
         {
 
         }

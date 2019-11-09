@@ -1,4 +1,5 @@
-﻿using GodSharp.Bus.Messages.Tests._Messages;
+﻿using GodSharp.Bus.Messages.Serialization.Protobuf;
+using GodSharp.Bus.Messages.Tests._Messages;
 using GodSharp.Bus.Messages.Transfers;
 using System.Collections.Generic;
 using Xunit;

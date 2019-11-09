@@ -12,7 +12,7 @@ namespace GodSharp.Bus.Messages
 
         public NamedPipeTransmitter()
         {
-            pipe = new NamedPipeClient(new NamedPipeClientOptions("godhsarp.bus.message.transmitter.namedpipe", OnReadCompleted, OnConnectionCompleted, OnStopCompleted, OnException, OnOutputLogging, 1024));
+            pipe = new NamedPipeClient(new NamedPipeClientOptions("godhsarp.bus.message.transmitter.namedpipe", OnReadCompleted, OnConnectionCompleted, OnInteractionCompleted, OnStopCompleted, OnException, OnOutputLogging, 1024));
         }
 
         public override void Send(byte[] buffer)
@@ -20,24 +20,27 @@ namespace GodSharp.Bus.Messages
             if (pipe.IsConnected) pipe.Write(buffer);
         }
 
-        private void OnReadCompleted(NamedPipeConnectionArgs args)
+        private void OnReadCompleted(ClientConnectionArgs args)
         {
             OnReceived(args.Buffer);
         }
 
-        private void OnConnectionCompleted(NamedPipeConnectionArgs args)
+        private void OnConnectionCompleted(ClientConnectionArgs args)
         {
         }
 
-        private void OnStopCompleted(NamedPipeConnectionArgs args)
+        private void OnInteractionCompleted(ClientConnectionArgs args)
         {
-
         }
 
-        private void OnException(NamedPipeConnectionArgs args)
+        private void OnStopCompleted(ClientConnectionArgs args)
         {
-
         }
+
+        private void OnException(ClientConnectionArgs args)
+        {
+        }
+
         private void OnOutputLogging(string log)
         {
             System.Console.WriteLine(log);
